@@ -2,19 +2,18 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <random>
 #include <cuda_runtime.h>
 
 /* Kernel Launcher */
 
 using GemmLauncher = void (*)(
     const float*, const float*, float*, int, int, int
-)
+);
 
 /* Global Parameter */
 
-constexpr WARM = 10;
-constexpr REPEAT = 100;
+constexpr int WARMUP = 10;
+constexpr int REPEAT = 100;
 
 /* Error Checking */
 
@@ -76,4 +75,4 @@ bool check_result(
 
 /* Test GEMM */
 
-void test_gemm(char *prompt, GemmLauncher launcher, int M, int N, int K);
+void test_gemm(const char *prompt, GemmLauncher launcher, int M, int N, int K);

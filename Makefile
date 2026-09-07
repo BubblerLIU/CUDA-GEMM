@@ -1,7 +1,5 @@
-CXX := g++
 NVCC := nvcc
 
-CXXFLAGS := -std=c++17 -O3 -Iinclude
 NVCCFLAGS := -std=c++17 -O3 -Iinclude
 
 SRC_DIR := src
@@ -26,7 +24,7 @@ $(TARGET): $(OBJS) | $(BIN_DIR)
 	$(NVCC) $(OBJS) -o $@
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(NVCC) $(NVCCFLAGS) -x c++ -c $< -o $@
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cu | $(BUILD_DIR)
 	$(NVCC) $(NVCCFLAGS) -c $< -o $@
