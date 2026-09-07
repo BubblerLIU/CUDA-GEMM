@@ -1,7 +1,20 @@
+#pragma once
+
 #include <cstdio>
 #include <cstdlib>
 #include <random>
 #include <cuda_runtime.h>
+
+/* Kernel Launcher */
+
+using GemmLauncher = void (*)(
+    const float*, const float*, float*, int, int, int
+)
+
+/* Global Parameter */
+
+constexpr WARM = 10;
+constexpr REPEAT = 100;
 
 /* Error Checking */
 
@@ -50,42 +63,17 @@ struct GpuTimer
 
 /* Data Reference */
 
-void random_init(float* data, int size)
-{
-    static std::mt19937 gen(17);
-    std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
-    for (int i = 0; i < size; ++i) {
-        data[i] = dist(gen);
-    }
-}
+void random_init(float* data, int size);
 
 void gemm_cpu(
     const float *A, const float *B, float *C, int M, int N, int K
-) {
-    for (int i = 0; i < M; ++i) {
-        for (int j = 0; j < N; ++j) {
-            float sum = 0;
-            for (int k = 0; k < K; ++k) {
-                sum += A[i * K + k] * B[k * N + j];
-            }
-            C[i * M + j] = sum;
-        }
-    }
-}
+);
 
 bool check_result(
     const float *gpu, const float *cpu, int size,
     float atol = 1e-3f, float rtol = 1e-3f
-) {
-    for (int i = 0; i < size; ++i) {
-        float diff = std::fabs(gpu[i] - cpu[i]);
-        float tolerance = atol + rtol * std::fabs(cpu[i]);
-        if (diff > tolerance) {
-            printf("Mismatch at %d: got %f, std %f\n", i, cpu[i], gpu[i]);
-            return false;
-        }
-    }
+);
 
-    printf("PASS\n");
-    return true;
-}
+/* Test GEMM */
+
+void test_gemm(char *prompt, GemmLauncher launcher, int M, int N, int K);
