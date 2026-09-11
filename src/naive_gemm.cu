@@ -18,7 +18,7 @@ __global__ void gemm_naive(
 void launch_gemm_naive(
     const float *A, const float *B, float *C, int M, int N, int K
 ) {
-    dim3 block(32, 8);
+    dim3 block(16, 16);
     dim3 grid((N + block.x - 1) / block.x, (M + block.y - 1) / block.y);
     gemm_naive<<<grid, block>>>(A, B, C, M, N, K);
 }
