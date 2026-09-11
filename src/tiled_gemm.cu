@@ -1,6 +1,6 @@
 #include <cuda_runtime.h>
 
-constexpr TILE = 16;
+constexpr int TILE = 16;
 
 __global__ void gemm_tiled(
     const float *A, const float *B, float *C, int M, int N, int K
