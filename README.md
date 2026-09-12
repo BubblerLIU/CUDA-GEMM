@@ -61,6 +61,8 @@ $$
 Test environment
 ```text
 GPU: NVIDIA GeForce RTX 5090
+CUDA Version: 13.0
+Compute Capability: 12.0
 CPU: INTEL(R) XEON(R) GOLD 6530
 OS: Ubuntu 22.04.5 LTS
 ```
