@@ -89,8 +89,8 @@ void test_gemm(const char *prompt, GemmLauncher launcher, int M, int N, int K) {
 
     float total_ms = timer.stop_ms();
     float avg_ms = total_ms / REPEAT;
-    double gflops = 2.0 * M * N * K / (avg_ms * 1e6);
-    printf("Average Latency: %f ms, Performance: %lf GFLOPS\n", avg_ms, gflops);
+    double gflops = 2.0 * M * N * K / (avg_ms * 1e9);
+    printf("Average Latency: %.3f ms, Performance: %.2lf TFLOPS\n", avg_ms, gflops);
     CUDA_CHECK(cudaGetLastError());
 
     // Check result

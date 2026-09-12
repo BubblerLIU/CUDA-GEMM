@@ -43,14 +43,14 @@ $$
 
 Throughput is calculated as
 $$
-\frac{2MNK}{\text{average latency(ms)}\times 10^{6}}\ \text{GFLOPS}
+\frac{2MNK}{\text{average latency(ms)}\times 10^{9}}\ \text{TFLOPS}
 $$
 
 Test environment
 ```text
-GPU: NVIDIA 5090
-CPU:
-OS:
+GPU: NVIDIA GeForce RTX 5090
+CPU: INTEL(R) XEON(R) GOLD 6530
+OS: Ubuntu 22.04.5 LTS
 ```
 
 For the same matrix dimensions:
@@ -58,7 +58,7 @@ $$
 \text{Speedup} = \frac{\text{Naive average latency}}{\text{current implementation average latency  }}
 $$
 
-| M | N | K | Implementation | Average Latency (ms) | GFLOPS | Speedup vs. Naive | Correctness |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 1024 | 1024 | 1024 | Naive | TBD | TBD | TBD | TBD |
-| 1024 | 1024 | 1024 | Tiled | TBD | TBD | TBD | TBD |
+| M | N | K | Implementation | Average Latency (ms) | TFLOPS | Speedup |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1024 | 1024 | 1024 | Naive | 0.304 | 7.07 | 1 |
+| 1024 | 1024 | 1024 | Tiled | 0.225 | 9.53 | 1.35 |
