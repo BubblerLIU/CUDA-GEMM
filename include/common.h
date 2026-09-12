@@ -75,4 +75,4 @@ bool check_result(
 
 /* Test GEMM */
 
-void test_gemm(const char *prompt, GemmLauncher launcher, int M, int N, int K);
+void test_gemm(const char *prompt, GemmLauncher launcher, int M, int N, int K, float *latency);

@@ -34,7 +34,7 @@ make clean    # Remove build artifacts
 
 Each implementation runs 10 warmup iterations followed by 100 timed iterations. Warmup and repetition counts can be changed in `include/common.h`.
 
-CUDA events measure execution time, and the test reports average latency and GFLOPS. Timing excludes memory allocation, host-device transfers, and CPU reference computation. 
+CUDA events measure execution time, and the test reports average latency and TFLOPS. Timing excludes memory allocation, host-device transfers, and CPU reference computation. 
 
 Results are compared elementwise against the CPU implementation with the tolerance 
 $$
@@ -46,19 +46,21 @@ $$
 \frac{2MNK}{\text{average latency(ms)}\times 10^{9}}\ \text{TFLOPS}
 $$
 
+For the same matrix dimensions:
+$$
+\text{Speedup} = \frac{\text{Naive average latency}}{\text{current implementation average latency  }}
+$$
+
+| M | N | K | Naive latency（ms） | Tiled latency（ms） | Tiled TFLOPS | Speedup |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1024 | 1024 | 1024 | 0.305 | 0.226 | 9.52 | 1.35 |
+| 1024 | 1024 | 2048 | 0.608 | 0.448 | 9.59 | 1.36 |
+| 2048 | 2048 | 1024 | 1.149 | 0.853 | 10.07 | 1.35 |
+| 1023 | 1025 | 1027 | 0.302 | 0.229 | 9.39 | 1.32 |
+
 Test environment
 ```text
 GPU: NVIDIA GeForce RTX 5090
 CPU: INTEL(R) XEON(R) GOLD 6530
 OS: Ubuntu 22.04.5 LTS
 ```
-
-For the same matrix dimensions:
-$$
-\text{Speedup} = \frac{\text{Naive average latency}}{\text{current implementation average latency  }}
-$$
-
-| M | N | K | Implementation | Average Latency (ms) | TFLOPS | Speedup |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1024 | 1024 | 1024 | Naive | 0.304 | 7.07 | 1 |
-| 1024 | 1024 | 1024 | Tiled | 0.225 | 9.53 | 1.35 |

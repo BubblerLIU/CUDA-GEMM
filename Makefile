@@ -15,6 +15,8 @@ CPP_OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(CPP_SRCS))
 CU_OBJS := $(patsubst $(SRC_DIR)/%.cu,$(BUILD_DIR)/%.o,$(CU_SRCS))
 
 OBJS := $(CPP_OBJS) $(CU_OBJS)
+DEPS := $(OBJS:.o=.d)
+DEPFLAGS = -MMD -MF $(@:.o=.d) -MT $@
 
 .PHONY: all clean run
 
@@ -23,11 +25,11 @@ all: $(TARGET)
 $(TARGET): $(OBJS) | $(BIN_DIR)
 	$(NVCC) $(OBJS) -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
-	$(NVCC) $(NVCCFLAGS) -x c++ -c $< -o $@
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile | $(BUILD_DIR)
+	$(NVCC) $(NVCCFLAGS) $(DEPFLAGS) -x c++ -c $< -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cu | $(BUILD_DIR)
-	$(NVCC) $(NVCCFLAGS) -c $< -o $@
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cu Makefile | $(BUILD_DIR)
+	$(NVCC) $(NVCCFLAGS) $(DEPFLAGS) -c $< -o $@
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
@@ -40,3 +42,5 @@ run: $(TARGET)
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
+
+-include $(DEPS)

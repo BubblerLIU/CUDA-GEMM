@@ -31,6 +31,13 @@ bool check_result(
     for (int i = 0; i < size; ++i) {
         float diff = std::fabs(gpu[i] - cpu[i]);
         float tolerance = atol + rtol * std::fabs(cpu[i]);
+
+        // Check NaN
+        if (std::isnan(diff)) {
+            printf("NaN at %d\n", i);
+            return false;
+        }
+
         if (diff > tolerance) {
             printf("Mismatch at %d: got %f, std %f\n", i, gpu[i], cpu[i]);
             return false;
@@ -41,7 +48,7 @@ bool check_result(
     return true;
 }
 
-void test_gemm(const char *prompt, GemmLauncher launcher, int M, int N, int K) {
+void test_gemm(const char *prompt, GemmLauncher launcher, int M, int N, int K, float *latency) {
     printf("TEST GEMM: %s\n", prompt);
 
     size_t bytes_A = M * K * sizeof(float);
@@ -79,7 +86,7 @@ void test_gemm(const char *prompt, GemmLauncher launcher, int M, int N, int K) {
     }
     CUDA_CHECK_KERNEL();
 
-    // Real Test
+    /* Real Test */ 
     GpuTimer timer;
     timer.start();
 
@@ -88,14 +95,20 @@ void test_gemm(const char *prompt, GemmLauncher launcher, int M, int N, int K) {
     }
 
     float total_ms = timer.stop_ms();
-    float avg_ms = total_ms / REPEAT;
-    double gflops = 2.0 * M * N * K / (avg_ms * 1e9);
-    printf("Average Latency: %.3f ms, Performance: %.2lf TFLOPS\n", avg_ms, gflops);
-    CUDA_CHECK(cudaGetLastError());
+    CUDA_CHECK_KERNEL();
 
     // Check result
     CUDA_CHECK(cudaMemcpy(h_C_gpu, d_C, bytes_C, cudaMemcpyDeviceToHost));
-    check_result(h_C_gpu, h_C_cpu, M * N);
+    bool flag = check_result(h_C_gpu, h_C_cpu, M * N);
+
+    if (flag == true) {
+        float avg_ms = total_ms / REPEAT;
+        double gflops = 2.0 * M * N * K / (avg_ms * 1e9);
+        printf("Average Latency: %.3f ms, Performance: %.2lf TFLOPS\n", avg_ms, gflops);
+        *latency = avg_ms; // Store result
+    } else {
+        printf("FAIL\n");
+    }
 
     // Release memory
     CUDA_CHECK(cudaFree(d_A));
